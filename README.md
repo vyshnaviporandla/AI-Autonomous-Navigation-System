@@ -141,4 +141,4 @@ Use relative Markdown links, e.g. `![Navigation demo](images/03_goal_reached.png
 - Documenting and version-controlling a project
 
 ## Author
-Add your name, GitHub profile, and contact details here before publishing.
+vyshnavi porandla, github link: https://github.com/vyshnaviporandla/AI-Autonomous-Navigation-System/ 
