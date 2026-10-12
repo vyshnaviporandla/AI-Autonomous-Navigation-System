@@ -122,6 +122,12 @@ Save evidence under `images/` or `outputs/`, for example:
 
 Use relative Markdown links, e.g. `![Navigation demo](images/03_goal_reached.png)`. Add only screenshots you actually captured from your run.
 
+## Simulation Demo
+
+The simulator uses A* pathfinding to navigate a grid, avoid obstacles, and reach the goal.
+
+![Navigation simulation screenshot](outputs/navigation_demo.png)
+
 ## Future improvements
 - Randomized maps and automated test scenarios
 - Replanning when obstacles change
