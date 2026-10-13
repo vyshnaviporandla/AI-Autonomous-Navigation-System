@@ -26,6 +26,29 @@ class AStarTests(unittest.TestCase):
     def test_start_equals_goal(self):
         self.assertEqual(astar([[0]], (0, 0), (0, 0)), [(0, 0)])
 
+    def test_replans_when_new_obstacle_blocks_old_path(self):
+        grid = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ]
+        start = (0, 1)
+        goal = (3, 1)
+        original_path = astar(grid, start, goal)
+        self.assertTrue(original_path)
+
+        blocked_cell = original_path[1]
+        x, y = blocked_cell
+        grid[y][x] = 1
+        new_path = astar(grid, start, goal)
+
+        self.assertTrue(new_path)
+        self.assertEqual(new_path[0], start)
+        self.assertEqual(new_path[-1], goal)
+        self.assertNotIn(blocked_cell, new_path)
+        self.assertTrue(all(grid[py][px] == 0 for px, py in new_path))
+
 
 if __name__ == "__main__":
     unittest.main()
