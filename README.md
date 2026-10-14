@@ -1,144 +1,302 @@
 # AI-Based Autonomous Navigation System
 
-A beginner-friendly autonomous navigation demo using a 2D virtual environment, Python, Pygame, and the A* path-planning algorithm. The virtual agent finds a route around blocked grid cells and animates its movement from a start point to a goal.
+An AI-assisted navigation simulation that combines **A\* path planning, dynamic obstacle replanning, YOLO object detection, OpenCV image processing, and Pygame visualization** in a virtual environment.
 
-> **Scope note:** This is a simulation-based learning project. It is not a road-ready self-driving system and does not yet include camera perception, trained object detection, real sensors, or hardware control.
+The project demonstrates how a virtual agent can plan a route around obstacles, react to a simulated obstacle appearing during movement, and use object detections from an image to create an approximate grid-based navigation plan.
 
-## Problem statement
-A mobile agent must travel from a start location to a destination without entering obstacle cells. The program builds a grid map, computes a path, visualizes it, and moves the agent along that route.
+> **Scope and limitations:** This is a software-only simulation and learning project. It does not control a physical robot or vehicle. YOLO detections mapped from a single image to grid cells are approximate and do not provide reliable real-world depth, localization, or obstacle distances.
 
-## Industry relevance
-Grid-based planning introduces concepts used in robotics and automation: environment representation, graph search, obstacle-aware routing, simulation, testing, and run metrics. Industrial systems require additional sensing, localization, control, and safety validation.
+## Problem Statement
+
+A virtual agent must travel from a defined start position to a goal while avoiding blocked grid cells. The system uses A\* search to calculate a path, visualizes the agent's movement, and demonstrates replanning when a temporary obstacle blocks the planned route.
+
+A separate vision-navigation module uses YOLO to detect objects in an image, approximates their positions on the simulation grid, and calculates a route around the resulting obstacle cells.
+
+## Objectives
+
+- Implement grid-based path planning using A\*.
+- Visualize autonomous agent movement in a 2D environment.
+- Demonstrate dynamic obstacle insertion and route replanning.
+- Detect objects in images using a pretrained YOLO model.
+- Process images with OpenCV.
+- Map selected object detections to approximate grid cells.
+- Record simulation results and maintain automated tests.
 
 ## Features
-- 2D virtual environment with fixed obstacles
-- A* path planning using Manhattan distance
-- Animated virtual agent
-- Pause, restart, screenshot, and quit controls
-- CSV run summary
-- Unit tests for the path planner
 
-## Tech stack
-- Python 3.10 or 3.11
+- **A\* path planning:** Finds a shortest path on a four-direction grid using Manhattan distance.
+- **Dynamic replanning:** Recalculates a route when a temporary obstacle is added during simulation.
+- **Pygame visualization:** Displays the grid, obstacles, route, agent, start, and goal.
+- **YOLO object detection:** Detects objects in an input image using a pretrained model.
+- **Vision-based navigation demo:** Maps selected detections to grid cells and runs A\* on the updated map.
+- **OpenCV image processing:** Demonstrates color-based detection and image output.
+- **Simulation metrics:** Saves run summaries to CSV.
+- **Automated tests:** Checks the path-planning functionality.
+
+## Technology Stack
+
+- Python
 - Pygame
-- Python standard library (`heapq`, `csv`, `unittest`)
+- NumPy
+- OpenCV
+- Ultralytics YOLO
+- pytest
+- Python standard library
 
-## Architecture
+## System Architecture
+
+### Navigation simulation
+
 ```text
-Grid map + start/goal
-        |
-        v
-Grid representation (src/grid.py)
-        |
-        v
-A* planner (src/astar.py)
-        |
-        v
-Planned route
-        |
-        v
-Pygame simulator (src/simulator.py)
-        |
-        +--> Animated visualization
-        +--> outputs/run_metrics.csv
+Grid configuration
+       |
+       v
+Grid construction
+       |
+       v
+A* path planner
+       |
+       v
+Initial route
+       |
+       v
+Pygame agent simulation
+       |
+       v
+Temporary obstacle appears
+       |
+       v
+A* replanning
+       |
+       v
+Updated route and run metrics
 ```
 
-## Folder structure
+### Vision-based navigation demonstration
+
+```text
+Input image
+     |
+     v
+YOLO object detection
+     |
+     v
+Selected object detections
+     |
+     v
+Approximate image-to-grid mapping
+     |
+     v
+Updated obstacle grid
+     |
+     v
+A* route planning
+     |
+     v
+Console results and visual navigation map
+```
+
+The vision-navigation script calculates a path from detections in an image. It is a separate demonstration and does not automatically feed live camera detections into the animated Pygame simulator.
+
+## Project Structure
+
 ```text
 AI-Autonomous-Navigation-System/
-├── docs/                  # Project notes and milestones
-├── outputs/               # Generated metrics and screenshots
+├── images/
+│   └── test.jpg
+├── outputs/
+│   ├── navigation_demo.png
+│   ├── vision_navigation.png
+│   └── yolo_detection/
+│       └── test.jpg
 ├── src/
-│   ├── astar.py            # A* path-planning algorithm
-│   ├── config.py           # Map and display settings
-│   ├── grid.py             # Grid and obstacle map
-│   ├── metrics.py          # CSV run summaries
-│   └── simulator.py       # Pygame visualization and agent movement
+│   ├── astar.py
+│   ├── config.py
+│   ├── grid.py
+│   ├── metrics.py
+│   ├── simulator.py
+│   ├── detect_objects.py
+│   ├── vision.py
+│   └── vision_navigation.py
 ├── tests/
-│   └── test_astar.py       # Unit tests
-├── main.py                 # Application entry point
+│   └── test_astar.py
 ├── requirements.txt
+├── main.py
 └── README.md
 ```
 
+Generated output files may not all be tracked by Git. The actual files in your local checkout determine which outputs are available.
+
 ## Installation
 
-### Windows (PowerShell)
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
+### Requirements
 
-If PowerShell blocks activation, use Command Prompt:
+- Python installed on your computer
+- Internet access for installing dependencies and obtaining model weights when needed
+- A desktop environment capable of opening a Pygame window
+
+The project has been run successfully in a Windows virtual environment using Python 3.13.15. Compatibility may vary with other Python and dependency versions.
+
+### Windows Command Prompt
+
+Open a terminal in the project root.
+
+Create a virtual environment if you do not already have one:
+
 ```bat
-.venv\Scripts\activate.bat
+python -m venv .venv
 ```
 
-### macOS / Linux
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
+Activate it:
+
+```bat
+.venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bat
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
+python -m pip install pytest
 ```
 
-## Run
-From the project root, with the virtual environment activated:
-```bash
-python main.py
+If pytest is already listed in `requirements.txt`, the additional pytest installation is unnecessary.
+
+## Running the Project
+
+Run the commands below from the **project root directory**, with the virtual environment activated.
+
+### 1. Start the animated navigation simulator
+
+```bat
+python -m src.simulator
 ```
 
-Controls:
-- `SPACE`: pause/resume
-- `R`: restart
-- `S`: save the current screen to `outputs/navigation_demo.png`
-- `ESC`: quit
+The virtual agent follows an A\*-planned route. During the simulation, a temporary obstacle is introduced, and the planner attempts to calculate a new route.
 
-When the agent reaches the goal, the terminal reports success and `outputs/run_metrics.csv` is written.
+**Controls**
 
-## Run tests
-```bash
-python -m unittest discover -s tests -v
+| Key | Action |
+|---|---|
+| `SPACE` | Pause or resume |
+| `R` | Restart the simulation |
+| `S` | Save a screenshot |
+| `ESC` | Quit |
+
+The simulator saves its screenshot to `outputs/navigation_demo.png` when you press `S`. Run metrics are recorded in `outputs/run_metrics.csv` when a run finishes or is stopped.
+
+### 2. Run YOLO object detection
+
+```bat
+python src\detect_objects.py
 ```
 
-## Results
-The expected demonstration shows:
-- Dark cells: obstacles
-- Green cells: planned route
-- Blue marker: start
-- Red marker: goal
-- Yellow circle: virtual agent
+This script runs the pretrained YOLO model on the sample image and reports detected classes, confidence scores, and bounding boxes.
 
-The CSV records status, number of path nodes, movement steps, and elapsed runtime. Record actual results after running the project; do not claim measurements that have not been collected.
+The annotated detection image is saved under:
 
-## Screenshots and demo
-Save evidence under `images/` or `outputs/`, for example:
-- `images/01_environment.png`
-- `images/02_planned_path.png`
-- `images/03_goal_reached.png`
-- `images/04_github_repo.png`
+```text
+outputs/yolo_detection/test.jpg
+```
 
-Use relative Markdown links, e.g. `![Navigation demo](images/03_goal_reached.png)`. Add only screenshots you actually captured from your run.
+The model weights may be downloaded automatically by Ultralytics when the model is first loaded. An internet connection may be required on the first run.
 
-## Future improvements
-- Randomized maps and automated test scenarios
-- Replanning when obstacles change
-- OpenCV-based camera perception
-- Lightweight object detection model
-- ROS 2 integration
-- CARLA or Gazebo integration
-- Localization and mapping
-- More realistic motion and collision models
+### 3. Run the vision-navigation demonstration
 
-## Learning outcomes
-- Representing a world as a grid
-- Implementing A* search
-- Separating code into modules
-- Visualizing a navigation algorithm
-- Writing unit tests and run metrics
-- Documenting and version-controlling a project
+```bat
+python src\vision_navigation.py
+```
+
+This script:
+
+1. Loads the sample image.
+2. Detects objects using YOLO.
+3. Maps selected detections to approximate grid cells.
+4. Adds eligible detected cells as simulated obstacles.
+5. Runs A\* to find a path.
+6. Prints detection and route information.
+
+The resulting map is saved to:
+
+```text
+outputs/vision_navigation.png
+```
+
+This mapping is an illustrative approximation. It is not a calibrated conversion from image coordinates to physical positions.
+
+### 4. Run the OpenCV vision demonstration
+
+```bat
+python src\vision.py
+```
+
+This script demonstrates image processing and color-based detection and generates a visual output under the `outputs` directory.
+
+### 5. Run automated tests
+
+```bat
+python -m pytest -v
+```
+
+The path-planning tests check the implemented A\* behavior.
+
+## Testing and Results
+
+The project has completed **four automated tests successfully** in the development environment.
+
+The Pygame simulator has also been launched successfully, and the temporary-obstacle replanning behavior has been observed during a manual run.
+
+The YOLO detection script has detected objects in the sample image, and the vision-navigation script has produced a path using the approximate obstacle grid.
+
+These results demonstrate the implemented software features. They do not establish real-world navigation accuracy, safety, or performance.
+
+## Outputs
+
+| File | Purpose |
+|---|---|
+| `outputs/navigation_demo.png` | Screenshot of the Pygame simulator |
+| `outputs/vision_navigation.png` | Grid visualization of obstacles and the planned route |
+| `outputs/yolo_detection/test.jpg` | Annotated object-detection image |
+| `outputs/run_metrics.csv` | Simulation run summaries |
+
+Output files are generated when the relevant scripts run. If a file is missing, run its corresponding script to regenerate it.
+
+## Limitations
+
+- The environment is a 2D grid rather than a physical world.
+- The dynamic obstacle in the Pygame simulator is simulated, not detected by a live camera.
+- The vision-navigation module uses a single image and approximate image-to-grid mapping.
+- A single image does not provide reliable metric depth or full 3D object positions.
+- The project does not currently implement live camera navigation, robot localization, motor control, or physical collision avoidance.
+- The system has not been validated for use in real vehicles or safety-critical environments.
+
+## Future Improvements
+
+- Integrate a live camera feed into the simulation.
+- Improve object-to-grid mapping using camera calibration and depth information.
+- Connect vision detections directly to a continuously running navigation loop.
+- Add randomized obstacle maps and more automated replanning tests.
+- Compare A\* with other path-planning algorithms.
+- Explore ROS 2 integration.
+- Explore robotics simulators such as Gazebo or CARLA.
+- Add more detailed performance measurements and evaluation scenarios.
+
+## Learning Outcomes
+
+- Grid representation and graph search
+- A\* pathfinding and heuristic functions
+- Dynamic obstacle replanning
+- Object detection using a pretrained model
+- Image processing with OpenCV
+- Python modular design and testing
+- Simulation visualization and CSV metrics
+- Version control using Git and GitHub
 
 ## Author
-vyshnavi porandla, github link: https://github.com/vyshnaviporandla/AI-Autonomous-Navigation-System/ 
+
+**Vyshnavi Porandla**
+
+GitHub repository: https://github.com/vyshnaviporandla/AI-Autonomous-Navigation-System
+
+Branch: `feature/dynamic-replanning`
